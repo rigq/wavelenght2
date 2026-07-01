@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Wavelength</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ============ PANTALLA: INICIO (crear / unirse) ============ -->
+    <section id="screen-home" class="screen active">
+      <h1 class="logo">📡 WAVELENGTH</h1>
+      <p class="subtitle">Lee la mente de tu equipo. Jugad hablando por Discord.</p>
+
+      <div class="card">
+        <label for="input-name">Tu nombre</label>
+        <input id="input-name" type="text" maxlength="20" placeholder="Ej: Fabri" autocomplete="off" />
+
+        <button id="btn-create" class="btn btn-accent">Crear sala</button>
+
+        <div class="divider"><span>o</span></div>
+
+        <label for="input-code">Código de sala</label>
+        <input id="input-code" type="text" maxlength="4" placeholder="ABCD" autocomplete="off" style="text-transform:uppercase" />
+        <button id="btn-join" class="btn">Unirse</button>
+
+        <p id="home-error" class="error"></p>
+      </div>
+    </section>
+
+    <!-- ============ PANTALLA: SALA DE ESPERA (lobby) ============ -->
+    <section id="screen-lobby" class="screen">
+      <h2>Sala <span id="lobby-code" class="code-badge"></span></h2>
+      <p class="subtitle">Comparte el código con tus amigos.</p>
+
+      <div class="teams">
+        <div class="team-box team-a">
+          <h3>Equipo A</h3>
+          <ul id="lobby-team-a"></ul>
+        </div>
+        <div class="team-box team-b">
+          <h3>Equipo B</h3>
+          <ul id="lobby-team-b"></ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Jugadores conectados (<span id="lobby-count">0</span>)</h3>
+        <ul id="lobby-players"></ul>
+        <button id="btn-start" class="btn btn-accent" style="display:none">Empezar partida</button>
+        <p id="lobby-hint" class="subtitle"></p>
+      </div>
+    </section>
+
+    <!-- ============ PANTALLA: JUEGO ============ -->
+    <section id="screen-game" class="screen">
+      <div class="scoreboard">
+        <div class="score score-a"><span class="score-label">Equipo A</span><span id="score-a">0</span></div>
+        <div class="turn-info">
+          <div id="turn-badge" class="turn-badge">—</div>
+          <div id="phase-badge" class="phase-badge"></div>
+        </div>
+        <div class="score score-b"><span class="score-label">Equipo B</span><span id="score-b">0</span></div>
+      </div>
+
+      <div id="my-role" class="my-role"></div>
+
+      <div class="dial-wrap">
+        <div class="dial-labels">
+          <span id="label-left" class="dial-label-left"></span>
+          <span id="label-right" class="dial-label-right"></span>
+        </div>
+        <div id="dial" class="dial">
+          <!-- zonas de puntuación (solo visibles en reveal) -->
+          <div id="zones" class="zones" style="display:none"></div>
+          <!-- marca del objetivo (solo psíquico o reveal) -->
+          <div id="target-marker" class="marker target" style="display:none"></div>
+          <!-- marca de la posición del equipo -->
+          <div id="guess-marker" class="marker guess" style="display:none"></div>
+        </div>
+        <input id="slider" type="range" min="0" max="100" value="50" step="1" style="display:none" />
+      </div>
+
+      <!-- pista mostrada a todos -->
+      <div id="clue-display" class="clue-display" style="display:none"></div>
+
+      <!-- ==== controles según fase/rol ==== -->
+
+      <!-- Psíquico: escribir pista -->
+      <div id="ctrl-clue" class="ctrl" style="display:none">
+        <label for="input-clue">Escribe tu pista (una palabra o frase corta)</label>
+        <input id="input-clue" type="text" maxlength="60" placeholder="Tu pista..." autocomplete="off" />
+        <button id="btn-clue" class="btn btn-accent">Enviar pista</button>
+      </div>
+
+      <!-- Equipo activo: adivinar posición -->
+      <div id="ctrl-guess" class="ctrl" style="display:none">
+        <p class="subtitle">Mueve el marcador donde creáis que está el objetivo y confirmad.</p>
+        <button id="btn-lock" class="btn btn-accent">Confirmar posición</button>
+      </div>
+
+      <!-- Equipo rival: votar izquierda/derecha -->
+      <div id="ctrl-rival" class="ctrl" style="display:none">
+        <p class="subtitle">¿El objetivo real está a la izquierda o a la derecha de la marca?</p>
+        <div class="lr-buttons">
+          <button id="btn-left" class="btn btn-big">⬅️ IZQUIERDA</button>
+          <button id="btn-right" class="btn btn-big">DERECHA ➡️</button>
+        </div>
+        <p id="rival-timer" class="subtitle"></p>
+      </div>
+
+      <!-- Espera pasiva -->
+      <div id="ctrl-wait" class="ctrl" style="display:none">
+        <p id="wait-text" class="subtitle"></p>
+      </div>
+
+      <!-- Resultado de la ronda -->
+      <div id="ctrl-reveal" class="ctrl" style="display:none">
+        <div id="reveal-text" class="reveal-text"></div>
+        <button id="btn-next" class="btn btn-accent">Siguiente ronda</button>
+      </div>
+    </section>
+
+    <!-- ============ PANTALLA: FIN DE PARTIDA ============ -->
+    <section id="screen-over" class="screen">
+      <h1 id="winner-text">🏆</h1>
+      <div id="final-score" class="final-score"></div>
+      <button id="btn-again" class="btn btn-accent">Jugar otra vez</button>
+    </section>
+
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
